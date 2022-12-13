@@ -53,6 +53,16 @@ bookRouter.get('/list', async (req, res) => {
                 }
             }
         }
+
+        if (req.query.author && req.query.author !== "") {
+            let authorFind = req.query.author || "";
+            let author = await Author.findOne({name: {$regex: authorFind}})
+            query = {
+                ...query,
+                author: author
+            }
+        }
+
         const books = await Book.find(query).populate({
             path: 'author',
             select: 'name'

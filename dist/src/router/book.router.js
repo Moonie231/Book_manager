@@ -51,6 +51,11 @@ bookRouter.get('/list', async (req, res) => {
                 }
             };
         }
+        if (req.query.author && req.query.author !== "") {
+            let authorFind = req.query.author || "";
+            let author = await author_model_1.Author.findOne({ name: { $regex: authorFind } });
+            query = Object.assign(Object.assign({}, query), { author: author });
+        }
         const books = await book_model_1.Book.find(query).populate({
             path: 'author',
             select: 'name'
