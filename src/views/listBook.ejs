@@ -29,7 +29,7 @@
 <% for (const book of books) { %>
 <h3>Title: <%= book.title %></h3>
 <p>Description: <%= book.description %></p>
-<p>Author: <%= book.author %></p>
+<p>Author: <%= (book.author) ? book.author.name : "None" %></p>
 <p>Keyword: <%= book.keyWord[0].keyword%></p>
 <button onclick="update('<%= book.id %>')">Update</button>
 <button onclick="deleteBook('<%= book.id %>')">Delete</button>

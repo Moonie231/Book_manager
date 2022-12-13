@@ -1,6 +1,6 @@
 import {Router} from "express";
 import multer from 'multer';
-import  {Book,keywordsSchema} from "../schemas/book.model";
+import  {Book} from "../schemas/book.model";
 import {Author} from "../schemas/author.model";
 
 
@@ -13,24 +13,41 @@ bookRouter.get('/create', (req : any, res : any) => {
 
 bookRouter.post('/create', async (req : any, res : any) => {
     try {
-        // const authorNew = new Author({
-        //     name: req.body.author
-        // })
+        const authorNew = new Author({
+            name: req.body.author
+        })
 
         const bookNew = new Book({
             title: req.body.title,
             description: req.body.description,
-            author: req.body.author,
+            author: authorNew,
         })
+
         bookNew.keyWord.push({keyword: req.body.keyword})
-        const book = await bookNew.save();
-        // console.log(book)
+        const p1 = authorNew.save()
+        const p2 = bookNew.save();
+        let [author, book] = await Promise.all([p1, p2])
+
         if (book) {
             res.redirect('/book/list')
         } else {
+            console.log()
             res.render('error')
         }
     } catch (err) {
+        console.log(err.message)
+        res.render('error')
+    }
+})
+
+bookRouter.get('/list', async (req, res) => {
+    try {
+        const books = await Book.find().populate({
+            path: 'author',
+            select: 'name'
+        })
+        res.render('listBook', {books: books})
+    }catch {
         res.render('error')
     }
 })
@@ -44,21 +61,11 @@ bookRouter.post('/update', upload.none(), async (req, res) => {
 
         await book.save();
         if (book) {
-            res.render('success')
+            res.render('/book/list')
         } else {
             res.render('error')
         }
     } catch (err) {
-        res.render('error')
-    }
-})
-
-bookRouter.get('/list', async (req, res) => {
-    try {
-        const books = await Book.find()
-        console.log(books)
-        res.render('listBook', {books: books})
-    }catch {
         res.render('error')
     }
 })

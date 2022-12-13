@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const multer_1 = __importDefault(require("multer"));
 const book_model_1 = require("../schemas/book.model");
+const author_model_1 = require("../schemas/author.model");
 const bookRouter = (0, express_1.Router)();
 const upload = (0, multer_1.default)();
 bookRouter.get('/create', (req, res) => {
@@ -13,21 +14,40 @@ bookRouter.get('/create', (req, res) => {
 });
 bookRouter.post('/create', async (req, res) => {
     try {
+        const authorNew = new author_model_1.Author({
+            name: req.body.author
+        });
         const bookNew = new book_model_1.Book({
             title: req.body.title,
             description: req.body.description,
-            author: req.body.author,
+            author: authorNew,
         });
         bookNew.keyWord.push({ keyword: req.body.keyword });
-        const book = await bookNew.save();
+        const p1 = authorNew.save();
+        const p2 = bookNew.save();
+        let [author, book] = await Promise.all([p1, p2]);
         if (book) {
             res.redirect('/book/list');
         }
         else {
+            console.log();
             res.render('error');
         }
     }
     catch (err) {
+        console.log(err.message);
+        res.render('error');
+    }
+});
+bookRouter.get('/list', async (req, res) => {
+    try {
+        const books = await book_model_1.Book.find().populate({
+            path: 'author',
+            select: 'name'
+        });
+        res.render('listBook', { books: books });
+    }
+    catch (_a) {
         res.render('error');
     }
 });
@@ -39,23 +59,13 @@ bookRouter.post('/update', upload.none(), async (req, res) => {
         book.author = req.body.author;
         await book.save();
         if (book) {
-            res.render('success');
+            res.render('/book/list');
         }
         else {
             res.render('error');
         }
     }
     catch (err) {
-        res.render('error');
-    }
-});
-bookRouter.get('/list', async (req, res) => {
-    try {
-        const books = await book_model_1.Book.find();
-        console.log(books);
-        res.render('listBook', { books: books });
-    }
-    catch (_a) {
         res.render('error');
     }
 });

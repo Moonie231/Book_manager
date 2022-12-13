@@ -7,16 +7,18 @@ interface IBook {
     keyWord: object[]
 }
 
-export const keywordsSchema = new Schema({
+const keywordsSchema = new Schema({
     keyword: String
 })
 
 const bookSchema = new Schema<IBook> ({
     title: String,
     description: String,
-    author: String,
-    keyWord: [keywordsSchema]
+    author: {type: Schema.Types.ObjectId, ref:"Author"},
+    keyWord: [keywordsSchema],
 })
 
-export const Book = model<IBook>('Book', bookSchema)
+const Book = model<IBook>('Book', bookSchema)
+
+export { Book };
 

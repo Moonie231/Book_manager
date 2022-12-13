@@ -21,16 +21,13 @@
 /// <reference types="mongoose/types/utility" />
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
+/// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
-import { Schema } from 'mongoose';
 interface IBook {
     title: string;
     description: string;
     author: object;
     keyWord: object[];
 }
-export declare const keywordsSchema: Schema<any, import("mongoose").Model<any, any, any, any, any>, {}, {}, {}, {}, import("mongoose").DefaultSchemaOptions, {
-    keyword?: string;
-}>;
-export declare const Book: import("mongoose").Model<IBook, {}, {}, {}, any>;
-export {};
+declare const Book: import("mongoose").Model<IBook, {}, {}, {}, any>;
+export { Book };
