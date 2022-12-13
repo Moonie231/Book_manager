@@ -41,7 +41,17 @@ bookRouter.post('/create', async (req, res) => {
 });
 bookRouter.get('/list', async (req, res) => {
     try {
-        const books = await book_model_1.Book.find().populate({
+        let query = {};
+        if (req.query.Keyword && req.query.Keyword !== "") {
+            let keywordFind = req.query.Keyword || "";
+            console.log(keywordFind);
+            query = {
+                "keyWord.keyword": {
+                    $regex: keywordFind
+                }
+            };
+        }
+        const books = await book_model_1.Book.find(query).populate({
             path: 'author',
             select: 'name'
         });

@@ -25,6 +25,15 @@
     </script>
 </head>
 <body>
+<form action="/book/list" method="get">
+    <label>Keyword:</label>
+    <input type="text" name="Keyword" id="Keyword">
+    <br>
+    <div class="form-group">
+        <button type="submit" class = "btn btn-primary">Search</button>
+    </div>
+</form>
+
 <h2>List Books</h2>
 <% for (const book of books) { %>
 <h3>Title: <%= book.title %></h3>
